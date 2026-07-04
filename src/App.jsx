@@ -4,6 +4,7 @@ import Login from './pages/Login'
 import ProtectedRoute from './components/ProtectedRoute'
 import Dashboard from "./pages/Dashboard"
 import Sell from "./pages/Sell"
+import Inventory from './pages/Inventory'
 
 function App() {
 
@@ -17,6 +18,9 @@ function App() {
         } />
         <Route path="/sell" element={
           <ProtectedRoute allowedRole="cashier"><Sell /></ProtectedRoute>
+        } />
+        <Route path="/inventory" element={
+          <ProtectedRoute allowedRole="admin"><Inventory /></ProtectedRoute>
         } />
       </Routes>
     </>
