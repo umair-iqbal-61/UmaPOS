@@ -7,9 +7,9 @@ export default function Dashboard() {
   const [weekRevenue, setWeekRevenue] = useState(0)
   const [lowStock, SetLowStock] = useState([])
   const [topProducts, setTopProducts] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-
     async function fetchDashboard() {
       // Today Revenue
       const startOfDay = new Date()
@@ -39,16 +39,19 @@ export default function Dashboard() {
       const { data: low } = await supabase.from('products').select('*')
       SetLowStock(low?.filter(p => p.stock_qty <= p.low_stock_threshold) || [])
 
+      setLoading(false)
     }
 
     fetchDashboard()
   }, [])
 
+  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading dashboard...</div>
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
 
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <div className="bg-white p-4 rounded-lg shadow">
           <p className="text-gray-500 text-sm">Today's Revenue</p>
           <p className="text-2xl font-bold">Rs. {todayRevenue}</p>

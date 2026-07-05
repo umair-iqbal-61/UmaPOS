@@ -9,6 +9,7 @@ export default function Sell() {
   const [paymentMethod, setPaymentMethod] = useState("cash")
   const { user } = useAuth()
   const [receipt, setReceipt] = useState(null)
+  const [productsLoading, setProductsLoading] = useState(true)
 
   useEffect(() => {
     const channel = supabase
@@ -28,6 +29,7 @@ export default function Sell() {
   async function fetchProducts() {
     const { data } = await supabase.from('products').select('*').order('name')
     setProducts(data || [])
+    setProductsLoading(false)
   }
 
   function addToCart(product) {
@@ -119,7 +121,11 @@ export default function Sell() {
     <div className="min-h-screen bg-gray-100 flex">
       {/* Product list */}
       <div className="w-2/3 p-4 grid grid-cols-3 gap-3 overflow-y-auto">
-        {products.map(p => (
+        {productsLoading ? (
+          <p className="text-gray-400 col-span-3">Loading products...</p>
+        ) : products.length === 0 ? (
+          <p className="text-gray-400 col-span-3">No products yet. Add some in Inventory.</p>
+        ) : products.map(p => (
           <button key={p.id} onClick={() => addToCart(p)}
             disabled={p.stock_qty <= 0}
             className="bg-white rounded-lg shadow p-4 text-left hover:bg-blue-50 disabled:opacity-40 disabled:cursor-not-allowed">
@@ -133,7 +139,7 @@ export default function Sell() {
       {/* Cart */}
       <div className="w-1/3 bg-white p-4 flex flex-col shadow-lg">
         <h2 className="text-lg font-bold mb-4">Cart</h2>
-        <div className="flex-1 overflow-y-auto space-y-2">
+        <div className="w-full md:w-2/3 p-2 sm:p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 overflow-y-auto">
           {cart.map(item => (
             <div key={item.id} className="flex justify-between items-center border-b pb-2">
               <div>
