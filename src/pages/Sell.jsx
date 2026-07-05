@@ -8,6 +8,7 @@ export default function Sell() {
   const [loading, setLoading] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState("cash")
   const { user } = useAuth()
+  const [receipt, setReceipt] = useState(null)
 
   useEffect(() => {
     fetchProducts()
@@ -87,7 +88,12 @@ export default function Sell() {
       await supabase.from('products').update({ stock_qty: item.stock_qty - item.qty }).eq('id', item.id)
     }
 
-    alert('Sale Completed!')
+    setReceipt({
+      items: cart,
+      total,
+      paymentMethod,
+      date: new Date().toLocaleString()
+    })
 
     // clear cart
     setCart([])
@@ -147,6 +153,36 @@ export default function Sell() {
           </button>
         </div>
       </div>
+
+      {receipt && <Receipt data={receipt} onClose={() => setReceipt(null)} />}
     </div>
   )
+
+  function Receipt({ data, onClose }) {
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="bg-white p-6 rounded-lg w-80 print:w-full">
+          <h2 className="text-lg font-bold text-center mb-2">UmaPOS</h2>
+          <p className="text-xs text-center text-gray-500 mb-4">{data.date}</p>
+          <div className="space-y-1 border-t border-b py-3 mb-3">
+            {data.items.map(item => (
+              <div key={item.id} className="flex justify-between text-sm">
+                <span>{item.name} x{item.qty}</span>
+                <span>Rs. {item.price * item.qty}</span>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-between font-bold mb-1">
+            <span>Total</span>
+            <span>Rs. {data.total}</span>
+          </div>
+          <p className="text-xs text-gray-500 mb-4 capitalize">Paid via {data.paymentMethod}</p>
+          <div className="flex gap-2 print:hidden">
+            <button onClick={() => window.print()} className="flex-1 bg-blue-600 text-white py-2 rounded">Print</button>
+            <button onClick={onClose} className="flex-1 bg-gray-200 py-2 rounded">Close</button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 }
