@@ -11,6 +11,17 @@ export default function Sell() {
   const [receipt, setReceipt] = useState(null)
 
   useEffect(() => {
+    const channel = supabase
+      .channel('products-realtime')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'products' }, (payload) => {
+        setProducts(prev => prev.map(p => p.id === payload.new.id ? payload.new : p))
+      })
+      .subscribe()
+
+    return () => supabase.removeChannel(channel)
+  }, [])
+
+  useEffect(() => {
     fetchProducts()
   }, [])
 
@@ -85,7 +96,8 @@ export default function Sell() {
 
     // update stock
     for (const item of cart) {
-      await supabase.from('products').update({ stock_qty: item.stock_qty - item.qty }).eq('id', item.id)
+      const { error } = await supabase.from('products').update({ stock_qty: item.stock_qty - item.qty }).eq('id', item.id)
+      if (error) console.error('Stock update failed:', error.message)
     }
 
     setReceipt({
