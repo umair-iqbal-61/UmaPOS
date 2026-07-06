@@ -121,9 +121,9 @@ export default function Sell() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gray-100 flex">
+      <div className="min-h-screen bg-gray-100 flex flex-col md:flex-row">
         {/* Product list */}
-        <div className="w-2/3 p-4 grid grid-cols-3 gap-3 overflow-y-auto">
+        <div className="w-full md:w-2/3 p-4 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 overflow-y-auto">
           {productsLoading ? (
             <p className="text-gray-400 col-span-3">Loading products...</p>
           ) : products.length === 0 ? (
@@ -140,9 +140,9 @@ export default function Sell() {
         </div>
 
         {/* Cart */}
-        <div className="w-1/3 bg-white p-4 flex flex-col shadow-lg">
+        <div className="w-full md:w-1/3 bg-white p-4 flex flex-col shadow-lg">
           <h2 className="text-lg font-bold mb-4">Cart</h2>
-          <div className="w-full md:w-2/3 p-2 sm:p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto space-y-2">
             {cart.map(item => (
               <div key={item.id} className="flex justify-between items-center border-b pb-2">
                 <div>
