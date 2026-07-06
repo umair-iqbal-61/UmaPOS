@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 export default function Signup() {
   const [fullName, setFullName] = useState('')
@@ -35,6 +35,7 @@ export default function Signup() {
         <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
           Sign Up
         </button>
+        <p>Already have an account: <Link className='text-blue-700' to='/login'>Login</Link></p>
       </form>
     </div>
   )
